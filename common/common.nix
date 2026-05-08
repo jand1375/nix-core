@@ -23,6 +23,7 @@
                      util-linux
                      nmap
                      ticker
+                     glab
     ];
   
   fonts.packages = with pkgs; [ nerd-fonts.jetbrains-mono ];
