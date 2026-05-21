@@ -34,7 +34,7 @@
                            http_port = 3000;
                          };
                 security = { secret_key = "nixos-grafana-test"; };
-
+              dashboards = { min_refresh_interval = "5s"; };
                     };
                                     # Add Prometheus as a Data Source
            provision = {
