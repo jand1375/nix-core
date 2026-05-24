@@ -20,7 +20,7 @@
       ../../modules/neovim/home.nix      
       ../../modules/yazi/home.nix
       ../../modules/neomutt/home.nix
-
+      ../../modules/kitty/home.nix
    ];
                                 };
 

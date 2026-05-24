@@ -13,7 +13,6 @@
                      git
                      gh
                      fastfetch 
-                     kitty
                      glances
                      curl
                      tmux
