@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-   home.packages = with pkgs; [ wofi ];
+   home.packages = with pkgs; [ rofi ];
    programs.waybar.enable = true;
 
    xdg.configFile."hypr/hyprland.conf".source = ./hyprland.conf;
