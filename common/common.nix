@@ -25,7 +25,7 @@
                      glab
     ];
   
-  fonts.packages = with pkgs; [ nerd-fonts.jetbrains-mono ];
+  fonts.packages = with pkgs; [ nerd-fonts.jetbrains-mono nerd-fonts.fira-code ];
 
 
 
