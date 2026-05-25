@@ -1,6 +1,17 @@
 { config, pkgs, ... }:
 {
-   home.packages = with pkgs; [ rofi ];
+   programs.rofi = {
+           enable = true;
+           package = pkgs.rofi;
+           extraConfig = {
+                           modi = "drun,run,window";
+                           sidebar-mode = true;
+                           show-icons = true;
+                           terminal = "kitty";
+                         };
+                     };
+
+
    programs.waybar.enable = true;
 
    xdg.configFile."hypr/hyprland.conf".source = ./hyprland.conf;
