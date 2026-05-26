@@ -8,7 +8,7 @@
       ../../common/common.nix
      ../../modules/hyprland
   #    ../../modules/xfce
-      ../../modules/distrobox
+      ../../modules/podman
       ../../services/qemu
       ../../instances/xclarity
       ../../modules/fish

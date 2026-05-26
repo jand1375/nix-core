@@ -2,9 +2,6 @@
  {  
    imports = [ ./hardware-configuration.nix 
                ../../common/common.nix
-               ../../dev-tools/nix.nix
-               ../../dev-tools/rust.nix
-      			   ../../dev-tools/python.nix
                ../../services/prometheus
        ];
   home-manager.users.nyx = {

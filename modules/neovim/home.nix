@@ -5,10 +5,12 @@
    withRuby = true;
    withPython3 = true;
    defaultEditor = true;
-   };
- home.sessionVariables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
+   extraPackages = with pkgs; [
+                                nill
+                                nixfmt-rfc-style
+                                rust-analyzer
+                                pyright
+                              ];
   };
 programs.bash.enable = true;
 

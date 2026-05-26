@@ -1,5 +1,77 @@
 { config, pkgs, ... }:
 {
+# HYPRLAND CONFIG
+  wayland.windowManager.hyprland = 
+      {
+                   enable = true;
+          xwayland.enable = true;
+                    settings = {
+                           monitor = ",preferred,auto,1";
+# VARIABLES
+                           "$mod" = "SUPER";
+# AUTOSTART
+                           "exec-once" = [ "waybar" "rot8" ];
+# LOOK AND FEEL
+                   general = {
+                                gaps_in = 5;
+                                gaps_out = 10;
+                                border_size = 2;
+                      "col.active_border" = "rgba(33cceeee) rgba(00ff99ee) 45deg";
+                      "col.inactive_border" = "rgba(595959aa)";
+                                layout = "dwindle";
+                                allow_tearing = false;
+                              };
+                 decoration = {
+                                rounding = 10;
+                                        blur = {
+                                                 enabled = true;
+                                                 size = 8;
+                                                 passes = 3;
+                                                 new_optimizations = true;
+                                                 xray = false;
+                                                };
+                                 drop_shadow = true;
+                                 shadow_range = 4;
+                                 shadow_render_power = 3;
+                                 "col.shadow" = "rgba(1a1a1aee)";
+                               };
+# ANIMATIONS
+                  animations = {
+                                  enabled = true;
+                                  bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
+                                  animation = [
+                                                "windows, 1, 5, myBezier"
+                                                "windowsOut, 1, 5, default, popsub 80%"
+                                                "border, 1, 10, default"
+                                                "borderangle, 1, 8, default"
+                                                "fade, 1, 5, default"
+                                                "workspaces, 1, 5, default, slide"
+                                                ];
+                                };
+# WINDOW MANAGEMENT BINDS
+                                  bind = [
+                                  # CORE APPLICATION
+                                  "$mod, RETURN, exec, kitty"
+                                  "$mod, R, exec, rofi"
+                                  "$mod, M, exit,"
+                                  # WINDOW CONTROLS
+                                  "$mod, Q, killactive,"
+                                  "$mod, F, fullscreen, 0"
+                                  "$mod, P, fullscreen, 1"
+                                  "$mod, SPACE, togglefloating,"
+                                  # FOCUS MOVEMENT
+                                  "$mod, h, movefocus, l"
+                                  "$mod, l, movefocus, r"
+                                  "$mod, k, movefocus, u"
+                                  "$mod, j, movefocus, d"
+
+
+
+
+
+
+
+
 # ROFI CONFIGURATION BLOCK
    programs.rofi = {
            enable = true;
