@@ -33,6 +33,7 @@ environment.systemPackages = with pkgs; [
      prismlauncher
      qutebrowser
      cage
+     pulsemixer
      brave
 ];
 
