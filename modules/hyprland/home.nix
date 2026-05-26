@@ -113,11 +113,13 @@ style = ''
         min-height: 0;
       }
         window#waybar {
-                background-color: rgba(21, 22, 30, 0.7);
+                background-color: rgba(21, 22, 30, 0.85);
                 color: #c0caf5;
                 transition-property: background-color;
                 transition-duration: .5s;
                 border-radius: 12px;
+                border: 1.5px solid #ff003c;
+                box-shadow: 0 0 10px rgba(255, 0, 60, 0.5), inset 0 0 6px rgba(255, 0, 60, 0.3);
       }
         #battery {
              color: #a9b1d6;
@@ -144,7 +146,7 @@ style = ''
                    background-color: transparent;
         }
            #workspaces button.active {
-                    color: #7aa2f7;
+                    color: #ff003c;
                     font-weight: bold;
         }
           #workspaces button.urgent {
@@ -160,6 +162,8 @@ style = ''
                      padding: 0 18px;
                      margin: 4px 3px;
                      border-radius: 8px;
+                     border: 1px solid #ff003c;
+                     box-shadow: 0 0 6px rgba(255, 0, 60, 0.4);
                    }
             #clock {
                      color: #7aa2f7;
