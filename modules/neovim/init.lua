@@ -1,11 +1,28 @@
 -- =========================
 -- Basic editor settings
 -- =========================
+
+-- LINE NUMBERS
 vim.opt.number = true
 vim.opt.relativenumber = true
+
+-- IDENTATION & SPACING
 vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
+vim.opt.shiftwidth = 2 
 vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.smartindent = true
+-- UI & FEELING
+vim.opt.termguicolors = true
+vim.opt.cursorline = true
+vim.opt.scrolloff = 8
+vim.opt.wrap = false
+-- SEARCH BEHAVIOR
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.hlsearch = true
+
+
 
 -- =========================
 -- Nix LSP (nil)

@@ -6,7 +6,7 @@
    withPython3 = true;
    defaultEditor = true;
    extraPackages = with pkgs; [
-                                nill
+                                nil
                                 nixfmt-rfc-style
                                 rust-analyzer
                                 pyright
