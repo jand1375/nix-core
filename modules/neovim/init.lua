@@ -21,6 +21,34 @@ vim.opt.wrap = false
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = true
+-- -------------------------
+-- LEADER KEY & CORE KEYMAPS
+-- -------------------------
+-- SET SPACEBAR AS THE LEADER KEY
+
+-- ==========================
+-- NATIVE COMPLETION ENGINE
+-- ==========================
+vim.opt.completeopt = { "menuone", "noselect", "noinsert" }
+vim.opt.shortmess:append("c")
+
+
+-- =======================
+-- NIX AUTO-FORMAT on SAVE
+-- =======================
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = "*.nix",
+  callback = function ()
+  local formatter = "nixfmt"
+
+  if vim.fn.executable(formatter) == 1 then
+    local current_view = vim.fn.winsaveview()
+    vim.cmd("%!" .. formatter)
+    vim.fn.winrestview(current_view)
+  end
+end,
+desc = "Automatically format Nix files on save using RFS style",
+})
 
 
 
