@@ -1,189 +1,213 @@
 -- =========================
--- Basic editor settings
+-- BASIC EDITOR SETTINGS
 -- =========================
 
--- LINE NUMBERS
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 
--- IDENTATION & SPACING
 vim.opt.expandtab = true
-vim.opt.shiftwidth = 2 
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.smartindent = true
--- UI & FEELING
+
 vim.opt.termguicolors = true
 vim.opt.cursorline = true
 vim.opt.scrolloff = 8
 vim.opt.wrap = false
--- SEARCH BEHAVIOR
+vim.opt.signcolumn = "yes"
+
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = true
--- -------------------------
--- LEADER KEY & CORE KEYMAPS
--- -------------------------
--- SET SPACEBAR AS THE LEADER KEY
+vim.opt.incsearch = true
 
--- ==========================
--- NATIVE COMPLETION ENGINE
--- ==========================
 vim.opt.completeopt = { "menuone", "noselect", "noinsert" }
 vim.opt.shortmess:append("c")
 
+vim.opt.updatetime = 250
+vim.opt.timeoutlen = 400
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+vim.opt.clipboard = "unnamedplus"
+vim.opt.undofile = true
+vim.opt.confirm = true
 
--- =======================
--- NIX AUTO-FORMAT on SAVE
--- =======================
-vim.api.nvim_create_autocmd("BufWritePost", {
-  pattern = "*.nix",
-  callback = function ()
-  local formatter = "nixfmt"
+-- =========================
+-- DIAGNOSTICS
+-- =========================
 
-  if vim.fn.executable(formatter) == 1 then
-    local current_view = vim.fn.winsaveview()
-    vim.cmd("%!" .. formatter)
-    vim.fn.winrestview(current_view)
-  end
-end,
-desc = "Automatically format Nix files on save using RFS style",
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = "●",
+    spacing = 2,
+  },
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
 })
 
-
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic" })
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Diagnostics list" })
 
 -- =========================
--- Nix LSP (nil)
+-- GENERAL KEYMAPS
 -- =========================
-local nil_cmd = { "nil" }
+
+vim.keymap.set("i", "<C-Space>", "<C-x><C-o>", { desc = "Trigger completion" })
+
+vim.keymap.set("n", "<leader>w", ":write<CR>", { desc = "Save file" })
+vim.keymap.set("n", "<leader>x", ":bdelete<CR>", { desc = "Close buffer" })
+vim.keymap.set("n", "<leader>h", ":nohlsearch<CR>", { desc = "Clear search highlight" })
+
+vim.keymap.set("n", "]q", ":cnext<CR>", { desc = "Next quickfix item" })
+vim.keymap.set("n", "[q", ":cprev<CR>", { desc = "Previous quickfix item" })
+
+-- =========================
+-- LSP ATTACH KEYMAPS
+-- =========================
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(event)
+    local bufnr = event.buf
+
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr, desc = "Go to definition" })
+    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = bufnr, desc = "Go to declaration" })
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, { buffer = bufnr, desc = "References" })
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr, desc = "Hover docs" })
+
+    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { buffer = bufnr, desc = "Rename symbol" })
+    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { buffer = bufnr, desc = "Code action" })
+
+    vim.keymap.set("n", "<leader>f", function()
+      vim.lsp.buf.format({
+        bufnr = bufnr,
+        timeout_ms = 2000,
+      })
+    end, { buffer = bufnr, desc = "Format file" })
+  end,
+})
+
+-- =========================
+-- SHARED LSP HELPER
+-- =========================
+
+local function setup_lsp(opts)
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = opts.filetype,
+
+    callback = function()
+      if vim.lsp.get_clients({
+        name = opts.name,
+        bufnr = 0,
+      })[1] then
+        return
+      end
+
+      local root = vim.fs.find(opts.root_files, { upward = true })[1]
+      root = root and vim.fs.dirname(root) or vim.loop.cwd()
+
+      vim.lsp.start({
+        name = opts.name,
+        cmd = opts.cmd,
+        root_dir = root,
+        settings = opts.settings,
+      })
+    end,
+  })
+
+  if opts.format_pattern then
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      pattern = opts.format_pattern,
+
+      callback = function()
+        vim.lsp.buf.format({
+          timeout_ms = 2000,
+        })
+      end,
+    })
+  end
+end
+
+-- =========================
+-- NIX LSP: nil
+-- =========================
+
+setup_lsp({
+  name = "nil",
+  filetype = "nix",
+  cmd = { "nil" },
+
+  root_files = {
+    "flake.nix",
+    ".git",
+  },
+
+  format_pattern = "*.nix",
+
+  settings = {
+    ["nil"] = {
+      formatting = {
+        command = { "nixfmt" },
+      },
+    },
+  },
+})
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "nix",
+
   callback = function()
-    -- جلوگیری از چندبار اجرا شدن LSP
-    if vim.lsp.get_clients({ name = "nil", bufnr = 0 })[1] then
-      return
-    end
-
-    -- Root detection (flake.nix → .git → fallback cwd)
-    local root = vim.fs.find({ "flake.nix", ".git" }, { upward = true })[1]
-    root = root and vim.fs.dirname(root) or vim.loop.cwd()
-
-    vim.lsp.start({
-      name = "nil",
-      cmd = nil_cmd,
-      root_dir = root,
-
-      -- Optional but recommended
-      settings = {
-        ["nil"] = {
-          formatting = {
-            command = { "nixfmt" }, -- or "alejandra"
-          },
-        },
-      },
-
-      on_attach = function(client, bufnr)
-        -- Enable LSP formatting
-        if client.server_capabilities.documentFormattingProvider then
-          vim.keymap.set("n", "<leader>f", function()
-            vim.lsp.buf.format({ bufnr = bufnr })
-          end, { buffer = bufnr, desc = "Format file" })
-        end
-      end,
+    vim.keymap.set("n", "<leader>ns", ":write | !home-manager switch<CR>", {
+      buffer = true,
+      desc = "Home Manager switch",
     })
   end,
 })
 
 -- =========================
--- Autoformat on save
+-- RUST LSP: rust-analyzer
 -- =========================
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.nix",
-  callback = function()
-    vim.lsp.buf.format({ timeout_ms = 2000 })
-  end,
-})
 
+setup_lsp({
+  name = "rust-analyzer",
+  filetype = "rust",
 
--- =========================
--- Rust LSP (rust-analyzer)
--- =========================
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "rust",
-  callback = function()
-    -- Prevent starting multiple LSP clients for the same buffer
-    if vim.lsp.get_clients({ name = "rust-analyzer", bufnr = 0 })[1] then
-      return
-    end
+  cmd = {
+    "rust-analyzer",
+  },
 
-    -- Root detection: look for Cargo.toml, otherwise fallback to cwd
-    local root = vim.fs.find({ "Cargo.toml", ".git" }, { upward = true })[1]
-    root = root and vim.fs.dirname(root) or vim.loop.cwd()
+  root_files = {
+    "Cargo.toml",
+    ".git",
+  },
 
-    vim.lsp.start({
-      name = "rust-analyzer",
-      cmd = { "rust-analyzer" },
-      root_dir = root,
-      on_attach = function(client, bufnr)
-        -- Optional: enable formatting keybind
-        if client.server_capabilities.documentFormattingProvider then
-          vim.keymap.set("n", "<leader>f", function()
-            vim.lsp.buf.format({ bufnr = bufnr })
-          end, { buffer = bufnr, desc = "Format Rust file" })
-        end
-      end,
-    })
-  end,
+  format_pattern = "*.rs",
 })
 
 -- =========================
--- Autoformat on save for Rust
+-- PYTHON LSP: pyright
 -- =========================
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.rs",
-  callback = function()
-    vim.lsp.buf.format({ timeout_ms = 2000 })
-  end,
-})
 
--- =========================
--- Python LSP (pyright)
--- =========================
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "python",
-  callback = function()
-    -- Prevent multiple LSP clients for the same buffer
-    if vim.lsp.get_clients({ name = "pyright", bufnr = 0 })[1] then
-      return
-    end
+setup_lsp({
+  name = "pyright",
+  filetype = "python",
 
-    -- Root detection: look for pyproject.toml, setup.py, or .git
-    local root = vim.fs.find({ "pyproject.toml", "setup.py", ".git" }, { upward = true })[1]
-    root = root and vim.fs.dirname(root) or vim.loop.cwd()
+  cmd = {
+    "pyright-langserver",
+    "--stdio",
+  },
 
-    vim.lsp.start({
-      name = "pyright",
-      cmd = { "pyright-langserver", "--stdio" },
-      root_dir = root,
-      on_attach = function(client, bufnr)
-        -- Optional: enable formatting keybind
-        if client.server_capabilities.documentFormattingProvider then
-          vim.keymap.set("n", "<leader>f", function()
-            vim.lsp.buf.format({ bufnr = bufnr })
-          end, { buffer = bufnr, desc = "Format Python file" })
-        end
-      end,
-    })
-  end,
-})
+  root_files = {
+    "pyproject.toml",
+    "setup.py",
+    ".git",
+  },
 
--- =========================
--- Autoformat on save for Python
--- =========================
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.py",
-  callback = function()
-    vim.lsp.buf.format({ timeout_ms = 2000 })
-  end,
+  format_pattern = "*.py",
 })
