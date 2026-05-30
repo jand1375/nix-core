@@ -5,7 +5,7 @@
   # External Dependicies Inputs
   # Standard NixOs Packages
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixvirt.url = "github:AshleyYakeley/NixVirt";
     disko = {
       url = "github:nix-community/disko";
@@ -14,7 +14,7 @@
 
     # User-level Configuration Tool, Keep HomeManager on same version as system
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

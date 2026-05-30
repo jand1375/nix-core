@@ -5,12 +5,11 @@
     enable = true;
     systemd.enable = true;
     xwayland.enable = true;
+    configType = "lua";
     settings = {
       monitor = ",preferred,auto,1";
-      # VARIABLES
-      "$mod" = "SUPER";
       # AUTOSTART
-      "exec-once" = [ "rot8" ];
+      "exec_once" = [ "rot8" ];
       # LOOK AND FEEL
       general = {
         gaps_in = 5;
@@ -38,57 +37,245 @@
         };
       };
       # ANIMATIONS
-      animations = {
+      animation = {
         enabled = true;
-        bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
-        animation = [
-          "windows, 1, 5, myBezier"
-          "windowsOut, 1, 5, default, popin 80%"
-          "border, 1, 10, default"
-          "borderangle, 1, 8, default"
-          "fade, 1, 5, default"
-          "workspaces, 1, 5, default, slide"
+        beziers = {
+          myBezier = [
+            0.05
+            0.9
+            0.1
+            1.05
+          ];
+        };
+        animations = [
+          [
+            "windows"
+            "1"
+            "5"
+            "myBezier"
+          ]
+          [
+            "windowsOut"
+            "1"
+            "5"
+            "default"
+            "popin 80%"
+          ]
+          [
+            "border"
+            "1"
+            "10"
+            "default"
+          ]
+          [
+            "borderangle"
+            "1"
+            "8"
+            "default"
+          ]
+          [
+            "fade"
+            "1"
+            "5"
+            "default"
+          ]
+          [
+            "workspaces"
+            "1"
+            "5"
+            "default"
+            "slide"
+          ]
         ];
       };
       # WINDOW MANAGEMENT BINDS
       bind = [
         # CORE APPLICATION
-        "$mod, RETURN, exec, kitty"
-        "$mod, r, exec, sh -c 'pkill rofi || rofi -show drun'"
-        "$mod, M, exit"
+        [
+          "SUPER"
+          "RETURN"
+          "exec"
+          "kitty"
+        ]
+        [
+          "SUPER"
+          "r"
+          "exec"
+          "sh -c 'pkill rofi || rofi -show drun'"
+        ]
+        [
+          "SUPER"
+          "M"
+          "exit"
+        ]
         # WINDOW CONTROLS
-        "$mod, Q, killactive"
-        "$mod, F, fullscreen, 0"
-        "$mod, P, fullscreen, 1"
-        "$mod, SPACE, togglefloating,"
+        [
+          "SUPER"
+          "Q"
+          "killactive"
+        ]
+        [
+          "SUPER"
+          "F"
+          "fullscreen"
+          "0"
+        ]
+        [
+          "SUPER"
+          "P"
+          "fullscreen"
+          "1"
+        ]
+        [
+          "SUPER"
+          "SPACE"
+          "togglefloating"
+          ""
+        ]
         # FOCUS MOVEMENT
-        "$mod, h, movefocus, l"
-        "$mod, l, movefocus, r"
-        "$mod, k, movefocus, u"
-        "$mod, j, movefocus, d"
+        [
+          "SUPER"
+          "h"
+          "movefocus"
+          "l"
+        ]
+        [
+          "SUPER"
+          "l"
+          "movefocus"
+          "r"
+        ]
+        [
+          "SUPER"
+          "k"
+          "movefocus"
+          "u"
+        ]
+        [
+          "SUPER"
+          "j"
+          "movefocus"
+          "d"
+        ]
         # SWITCH WORKSPACES
-        "$mod, 1, workspace, 1"
-        "$mod, 2, workspace, 2"
-        "$mod, 3, workspace, 3"
-        "$mod, 4, workspace, 4"
-        "$mod, 5, workspace, 5"
-        "$mod, 6, workspace, 6"
-        "$mod, 7, workspace, 7"
-        "$mod, 8, workspace, 8"
+        [
+          "SUPER"
+          "1"
+          "workspace"
+          "1"
+        ]
+        [
+          "SUPER"
+          "2"
+          "workspace"
+          "2"
+        ]
+        [
+          "SUPER"
+          "3"
+          "workspace"
+          "3"
+        ]
+        [
+          "SUPER"
+          "4"
+          "workspace"
+          "4"
+        ]
+        [
+          "SUPER"
+          "5"
+          "workspace"
+          "5"
+        ]
+        [
+          "SUPER"
+          "6"
+          "workspace"
+          "6"
+        ]
+        [
+          "SUPER"
+          "7"
+          "workspace"
+          "7"
+        ]
+        [
+          "SUPER"
+          "8"
+          "workspace"
+          "8"
+        ]
         # MOVE ACTIVE WINDOWS
-        "$mod SHIFT, 1, movetoworkspace, 1"
-        "$mod SHIFT, 2, movetoworkspace, 2"
-        "$mod SHIFT, 3, movetoworkspace, 3"
-        "$mod SHIFT, 4, movetoworkspace, 4"
-        "$mod SHIFT, 5, movetoworkspace, 5"
-        "$mod SHIFT, 6, movetoworkspace, 6"
-        "$mod SHIFT, 7, movetoworkspace, 7"
-        "$mod SHIFT, 8, movetoworkspace, 8"
+        [
+          "SUPER"
+          "SHIFT"
+          "1"
+          "movetoworkspace"
+          "1"
+        ]
+        [
+          "SUPER"
+          "SHIFT"
+          "2"
+          "movetoworkspace"
+          "2"
+        ]
+        [
+          "SUPER"
+          "SHIFT"
+          "3"
+          "movetoworkspace"
+          "3"
+        ]
+        [
+          "SUPER"
+          "SHIFT"
+          "4"
+          "movetoworkspace"
+          "4"
+        ]
+        [
+          "SUPER"
+          "SHIFT"
+          "5"
+          "movetoworkspace"
+          "5"
+        ]
+        [
+          "SUPER"
+          "SHIFT"
+          "6"
+          "movetoworkspace"
+          "6"
+        ]
+        [
+          "SUPER"
+          "SHIFT"
+          "7"
+          "movetoworkspace"
+          "7"
+        ]
+        [
+          "SUPER"
+          "SHIFT"
+          "8"
+          "movetoworkspace"
+          "8"
+        ]
       ];
       # MOUSE BINDS
       bindm = [
-        "$mod, mouse:272, movewindow"
-        "$mod, mouse:273, resizewindow"
+        [
+          "SUPER"
+          "mouse:272"
+          "movewindow"
+        ]
+        [
+          "SUPER"
+          "mouse:273"
+          "resizewindow"
+        ]
       ];
       # LAYOUT TWEAKS
       dwindle = {

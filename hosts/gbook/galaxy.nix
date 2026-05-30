@@ -18,7 +18,7 @@
     ../../modules/fish
   ];
   home-manager.users.nyx = {
-    home.stateVersion = "25.11";
+    home.stateVersion = "26.05";
     imports = [
       ../../modules/hyprland/home.nix
       ../../modules/neovim/home.nix
@@ -78,5 +78,5 @@
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
   services.openssh.enable = true;
-  system.stateVersion = "25.11";
+  system.stateVersion = "25.05";
 }
