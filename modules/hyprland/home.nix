@@ -71,13 +71,50 @@ in
     };
 
     animation = [
-      { _args = [ "windows" { enabled = true; speed = 5.0; bezier = "myBezier"; } ]; }
-      { _args = [ "windowsOut" { enabled = true; speed = 5.0; bezier = "default"; style = "popin 80%"; } ]; }
-      { _args = [ "border" { enabled = true; speed = 10.0; bezier = "default"; } ]; }
-      { _args = [ "borderangle" { enabled = true; speed = 8.0; bezier = "default"; } ]; }
-      { _args = [ "fade" { enabled = true; speed = 5.0; bezier = "default"; } ]; }
-      { _args = [ "workspaces" { enabled = true; speed = 5.0; bezier = "default"; style = "slide"; } ]; }
-    ];
+  {
+    leaf = "windows";
+    enabled = true;
+    speed = 5.0;
+    bezier = "myBezier";
+  }
+
+  {
+    leaf = "windowsOut";
+    enabled = true;
+    speed = 5.0;
+    bezier = "default";
+    style = "popin 80%";
+  }
+
+  {
+    leaf = "border";
+    enabled = true;
+    speed = 10.0;
+    bezier = "default";
+  }
+
+  {
+    leaf = "borderangle";
+    enabled = true;
+    speed = 8.0;
+    bezier = "default";
+  }
+
+  {
+    leaf = "fade";
+    enabled = true;
+    speed = 5.0;
+    bezier = "default";
+  }
+
+  {
+    leaf = "workspaces";
+    enabled = true;
+    speed = 5.0;
+    bezier = "default";
+    style = "slide";
+  }
+];
 
     bind = [
       { _args = [ "SUPER + RETURN" (lua ''hl.dsp.exec_cmd("kitty")'') ]; }
