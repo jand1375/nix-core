@@ -1,166 +1,252 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   lua = lib.generators.mkLuaInline;
 in
 {
-   wayland.windowManager.hyprland = {
-  enable = true;
-  systemd.enable = true;
-  xwayland.enable = true;
-  configType = "lua";
+  wayland.windowManager.hyprland = {
+    enable = true;
+    systemd.enable = true;
+    xwayland.enable = true;
+    configType = "lua";
 
-  settings = {
-    monitor = {
-      output = "";
-      mode = "preferred";
-      position = "auto";
-      scale = 1;
-    };
-
-    config = {
-      general = {
-        gaps_in = 5;
-        gaps_out = 10;
-        border_size = 2;
-        layout = "dwindle";
-        allow_tearing = false;
-        col.active_border = {
-          colors = [ "rgba(33cceeee)" "rgba(00ff99ee)" ];
-          angle = 45;
-        };
-        col.inactive_border = "rgba(595959aa)";
+    settings = {
+      monitor = {
+        output = "";
+        mode = "preferred";
+        position = "auto";
+        scale = 1;
       };
 
-      decoration = {
-        rounding = 10;
-        blur = {
-          enabled = true;
-          size = 8;
-          passes = 3;
-          new_optimizations = true;
-          xray = false;
+      config = {
+        general = {
+          gaps_in = 5;
+          gaps_out = 10;
+          border_size = 2;
+          layout = "dwindle";
+          allow_tearing = false;
+          col.active_border = {
+            colors = [
+              "rgba(33cceeee)"
+              "rgba(00ff99ee)"
+            ];
+            angle = 45;
+          };
+          col.inactive_border = "rgba(595959aa)";
         };
-        shadow = {
-          enabled = true;
-          range = 4;
-          render_power = 3;
-          color = "rgba(1a1a1aae)";
+
+        decoration = {
+          rounding = 10;
+          blur = {
+            enabled = true;
+            size = 8;
+            passes = 3;
+            new_optimizations = true;
+            xray = false;
+          };
+          shadow = {
+            enabled = true;
+            range = 4;
+            render_power = 3;
+            color = "rgba(1a1a1aae)";
+          };
+        };
+
+        animations.enabled = true;
+
+        dwindle = {
+          preserve_split = true;
         };
       };
 
-      animations.enabled = true;
-
-      dwindle = {
-        pseudotile = true;
-        preserve_split = true;
+      curve = {
+        _args = [
+          "myBezier"
+          {
+            type = "bezier";
+            points = [
+              [
+                0.05
+                0.9
+              ]
+              [
+                0.1
+                1.05
+              ]
+            ];
+          }
+        ];
       };
-    };
 
-    curve = {
-      _args = [
-        "myBezier"
+      animation = [
         {
-          type = "bezier";
-          points = [
-            [ 0.05 0.9 ]
-            [ 0.1 1.05 ]
-          ];
+          leaf = "windows";
+          enabled = true;
+          speed = 5.0;
+          bezier = "myBezier";
+        }
+
+        {
+          leaf = "windowsOut";
+          enabled = true;
+          speed = 5.0;
+          bezier = "default";
+          style = "popin 80%";
+        }
+
+        {
+          leaf = "border";
+          enabled = true;
+          speed = 10.0;
+          bezier = "default";
+        }
+
+        {
+          leaf = "borderangle";
+          enabled = true;
+          speed = 8.0;
+          bezier = "default";
+        }
+
+        {
+          leaf = "fade";
+          enabled = true;
+          speed = 5.0;
+          bezier = "default";
+        }
+
+        {
+          leaf = "workspaces";
+          enabled = true;
+          speed = 5.0;
+          bezier = "default";
+          style = "slide";
         }
       ];
-    };
 
-    animation = [
-  {
-    leaf = "windows";
-    enabled = true;
-    speed = 5.0;
-    bezier = "myBezier";
-  }
+      bind = [
+        {
+          _args = [
+            "SUPER + RETURN"
+            (lua ''hl.dsp.exec_cmd("kitty")'')
+          ];
+        }
+        {
+          _args = [
+            "SUPER + R"
+            (lua ''hl.dsp.exec_cmd("pkill rofi || rofi -show drun")'')
+          ];
+        }
+        {
+          _args = [
+            "SUPER + M"
+            (lua "hl.dsp.exit()")
+          ];
+        }
 
-  {
-    leaf = "windowsOut";
-    enabled = true;
-    speed = 5.0;
-    bezier = "default";
-    style = "popin 80%";
-  }
+        {
+          _args = [
+            "SUPER + Q"
+            (lua "hl.dsp.window.close()")
+          ];
+        }
+        {
+          _args = [
+            "SUPER + F"
+            (lua ''hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" })'')
+          ];
+        }
+        {
+          _args = [
+            "SUPER + P"
+            (lua ''hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" })'')
+          ];
+        }
+        {
+          _args = [
+            "SUPER + SPACE"
+            (lua ''hl.dsp.window.float({ action = "toggle" })'')
+          ];
+        }
 
-  {
-    leaf = "border";
-    enabled = true;
-    speed = 10.0;
-    bezier = "default";
-  }
+        {
+          _args = [
+            "SUPER + h"
+            (lua ''hl.dsp.focus({ direction = "l" })'')
+          ];
+        }
+        {
+          _args = [
+            "SUPER + l"
+            (lua ''hl.dsp.focus({ direction = "r" })'')
+          ];
+        }
+        {
+          _args = [
+            "SUPER + k"
+            (lua ''hl.dsp.focus({ direction = "u" })'')
+          ];
+        }
+        {
+          _args = [
+            "SUPER + j"
+            (lua ''hl.dsp.focus({ direction = "d" })'')
+          ];
+        }
 
-  {
-    leaf = "borderangle";
-    enabled = true;
-    speed = 8.0;
-    bezier = "default";
-  }
+        {
+          _args = [
+            "SUPER + mouse:272"
+            (lua "hl.dsp.window.drag()")
+          ];
+        }
+        {
+          _args = [
+            "SUPER + mouse:273"
+            (lua "hl.dsp.window.resize()")
+          ];
+        }
+      ]
+      ++ builtins.concatLists (
+        builtins.genList (
+          i:
+          let
+            ws = i + 1;
+          in
+          [
+            {
+              _args = [
+                "SUPER + ${toString ws}"
+                (lua "hl.dsp.focus({ workspace = ${toString ws} })")
+              ];
+            }
+            {
+              _args = [
+                "SUPER + SHIFT + ${toString ws}"
+                (lua "hl.dsp.window.move({ workspace = ${toString ws} })")
+              ];
+            }
+          ]
+        ) 8
+      );
 
-  {
-    leaf = "fade";
-    enabled = true;
-    speed = 5.0;
-    bezier = "default";
-  }
-
-  {
-    leaf = "workspaces";
-    enabled = true;
-    speed = 5.0;
-    bezier = "default";
-    style = "slide";
-  }
-];
-
-bind =
-  [
-    { _args = [ "SUPER + RETURN" (lua ''hl.dsp.exec_cmd("kitty")'') ]; }
-    { _args = [ "SUPER + R" (lua ''hl.dsp.exec_cmd("pkill rofi || rofi -show drun")'') ]; }
-    { _args = [ "SUPER + M" (lua "hl.dsp.exit()") ]; }
-
-    { _args = [ "SUPER + Q" (lua "hl.dsp.window.close()") ]; }
-    { _args = [ "SUPER + F" (lua ''hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" })'') ]; }
-    { _args = [ "SUPER + P" (lua ''hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" })'') ]; }
-    { _args = [ "SUPER + SPACE" (lua ''hl.dsp.window.float({ action = "toggle" })'') ]; }
-
-    { _args = [ "SUPER + h" (lua ''hl.dsp.focus({ direction = "l" })'') ]; }
-    { _args = [ "SUPER + l" (lua ''hl.dsp.focus({ direction = "r" })'') ]; }
-    { _args = [ "SUPER + k" (lua ''hl.dsp.focus({ direction = "u" })'') ]; }
-    { _args = [ "SUPER + j" (lua ''hl.dsp.focus({ direction = "d" })'') ]; }
-
-    { _args = [ "SUPER + mouse:272" (lua ''hl.dsp.window.drag()'') ]; }
-    { _args = [ "SUPER + mouse:273" (lua ''hl.dsp.window.resize()'') ]; }
-  ]
-  ++ builtins.concatLists (builtins.genList
-    (i:
-      let ws = i + 1;
-      in [
-        { _args = [ "SUPER + ${toString ws}" (lua "hl.dsp.focus({ workspace = ${toString ws} })") ]; }
-        { _args = [ "SUPER + SHIFT + ${toString ws}" (lua "hl.dsp.window.move({ workspace = ${toString ws} })") ]; }
-      ])
-    8);
-
-	  
-
-    on = {
-      _args = [
-        "hyprland.start"
-        (lua ''
-          function()
-            hl.exec_cmd("rot8")
-          end
-        '')
-      ];
+      on = {
+        _args = [
+          "hyprland.start"
+          (lua ''
+            function()
+              hl.exec_cmd("rot8")
+            end
+          '')
+        ];
+      };
     };
   };
-};
-
-		  
-		  
 
   # ROFI CONFIGURATION BLOCK
   programs.rofi = {
