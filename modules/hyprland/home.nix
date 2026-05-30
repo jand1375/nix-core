@@ -116,33 +116,35 @@ in
   }
 ];
 
-    bind = [
-      { _args = [ "SUPER + RETURN" (lua ''hl.dsp.exec_cmd("kitty")'') ]; }
-      { _args = [ "SUPER + R" (lua ''hl.dsp.exec_cmd("pkill rofi || rofi -show drun")'') ]; }
-      { _args = [ "SUPER + M" (lua "hl.dsp.exit()") ]; }
+bind =
+  [
+    { _args = [ "SUPER + RETURN" (lua ''hl.dsp.exec_cmd("kitty")'') ]; }
+    { _args = [ "SUPER + R" (lua ''hl.dsp.exec_cmd("pkill rofi || rofi -show drun")'') ]; }
+    { _args = [ "SUPER + M" (lua "hl.dsp.exit()") ]; }
 
-      { _args = [ "SUPER + Q" (lua "hl.dsp.window.close()") ]; }
-      { _args = [ "SUPER + F" (lua ''hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" })'') ]; }
-      { _args = [ "SUPER + P" (lua ''hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" })'') ]; }
-      { _args = [ "SUPER + SPACE" (lua ''hl.dsp.window.float({ action = "toggle" })'') ]; }
+    { _args = [ "SUPER + Q" (lua "hl.dsp.window.close()") ]; }
+    { _args = [ "SUPER + F" (lua ''hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" })'') ]; }
+    { _args = [ "SUPER + P" (lua ''hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" })'') ]; }
+    { _args = [ "SUPER + SPACE" (lua ''hl.dsp.window.float({ action = "toggle" })'') ]; }
 
-      { _args = [ "SUPER + h" (lua ''hl.dsp.focus({ direction = "l" })'') ]; }
-      { _args = [ "SUPER + l" (lua ''hl.dsp.focus({ direction = "r" })'') ]; }
-      { _args = [ "SUPER + k" (lua ''hl.dsp.focus({ direction = "u" })'') ]; }
-      { _args = [ "SUPER + j" (lua ''hl.dsp.focus({ direction = "d" })'') ]; }
-    ] ++ builtins.concatLists (builtins.genList
-      (i:
-        let ws = i + 1;
-        in [
-          { _args = [ "SUPER + ${toString ws}" (lua "hl.dsp.focus({ workspace = ${toString ws} })") ]; }
-          { _args = [ "SUPER + SHIFT + ${toString ws}" (lua "hl.dsp.window.move({ workspace = ${toString ws} })") ]; }
-        ])
-      8);
+    { _args = [ "SUPER + h" (lua ''hl.dsp.focus({ direction = "l" })'') ]; }
+    { _args = [ "SUPER + l" (lua ''hl.dsp.focus({ direction = "r" })'') ]; }
+    { _args = [ "SUPER + k" (lua ''hl.dsp.focus({ direction = "u" })'') ]; }
+    { _args = [ "SUPER + j" (lua ''hl.dsp.focus({ direction = "d" })'') ]; }
 
-    bindm = [
-      { _args = [ "SUPER + mouse:272" (lua ''hl.dsp.window.drag()'') ]; }
-      { _args = [ "SUPER + mouse:273" (lua ''hl.dsp.window.resize()'') ]; }
-    ];
+    { _args = [ "SUPER + mouse:272" (lua ''hl.dsp.window.drag()'') ]; }
+    { _args = [ "SUPER + mouse:273" (lua ''hl.dsp.window.resize()'') ]; }
+  ]
+  ++ builtins.concatLists (builtins.genList
+    (i:
+      let ws = i + 1;
+      in [
+        { _args = [ "SUPER + ${toString ws}" (lua "hl.dsp.focus({ workspace = ${toString ws} })") ]; }
+        { _args = [ "SUPER + SHIFT + ${toString ws}" (lua "hl.dsp.window.move({ workspace = ${toString ws} })") ]; }
+      ])
+    8);
+
+	  
 
     on = {
       _args = [
