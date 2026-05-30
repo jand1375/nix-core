@@ -1,79 +1,82 @@
 # GBOOK LAPTOP HOST
 
-{ config, lib, pkgs, ... }:
 {
-  imports =
-    [ 
-      ./hardware-configuration.nix
-      ../../common/common.nix
-     ../../modules/hyprland
-  #    ../../modules/xfce
-      ../../modules/podman
-      ../../services/qemu
-      ../../instances/xclarity
-      ../../modules/fish
-    ];
-       home-manager.users.nyx = {
-       home.stateVersion = "25.11";
-   imports = [
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  imports = [
+    ./hardware-configuration.nix
+    ../../common/common.nix
+    ../../modules/hyprland
+    #    ../../modules/xfce
+    ../../modules/podman
+    ../../services/qemu
+    ../../instances/xclarity
+    ../../modules/fish
+  ];
+  home-manager.users.nyx = {
+    home.stateVersion = "25.11";
+    imports = [
       ../../modules/hyprland/home.nix
-      ../../modules/neovim/home.nix      
+      ../../modules/neovim/home.nix
       ../../modules/yazi/home.nix
       ../../modules/neomutt/home.nix
       ../../modules/kitty/home.nix
-   ];
-                                };
+    ];
+  };
 
-environment.systemPackages = with pkgs; [
-     brightnessctl
-     alsa-utils
-     alsa-tools
-     wireplumber
-     rot8
-     prismlauncher
-     qutebrowser
-     cage
-     pulsemixer
-     brave
-];
+  environment.systemPackages = with pkgs; [
+    brightnessctl
+    alsa-utils
+    alsa-tools
+    wireplumber
+    rot8
+    prismlauncher
+    qutebrowser
+    cage
+    pulsemixer
+    brave
+  ];
 
- # BOOT AND KERNEL
+  # BOOT AND KERNEL
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelParams = [ "loglevel=0" "pci-nommconf" "ucsi_acpi.ignore_errors=1" "systemd.show_status=true" "rd.udev.log_level=0" "acpi_enforce_resources=lax" "modprobe.blacklist=acpi_fan" "acpi_mask_gpe=0x4B"
-                         "udev.log_level=0" ];
-  boot.blacklistedKernelModules = [ "acpi_fan" "ucsi_acpi" ];
- 
+  boot.kernelParams = [
+    "quiet"
+    "loglevel=3"
+    "systemd.show_status=true"
+  ];
+  boot.blacklistedKernelModules = [ "ucsi_acpi" ];
 
-
- # HARDWARE
+  # HARDWARE
   hardware.xpadneo.enable = true;
   hardware.steam-hardware.enable = true;
-  hardware.bluetooth.enable = true; 
+  hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
   hardware.sensor.iio.enable = true;
   services.thermald.enable = true;
   hardware.graphics = {
-           enable = true;
-           enable32Bit = true;
-                      };
- 
+    enable = true;
+    enable32Bit = true;
+  };
 
- # NETWORKING
-  networking.hostName = "gbook"; 
+  # NETWORKING
+  networking.hostName = "gbook";
   networking.networkmanager.enable = true;
- 
- # SOUND
-   services.pipewire = {
-   enable = true;
-   alsa.enable = true;
-   alsa.support32Bit = true;
-   pulse.enable = true;
-                       };
-  # Enable touchpad support (enabled default in most desktopManager).
-   services.libinput.enable = true;  
-   services.openssh.enable = true;
-   system.stateVersion = "25.11"; 
- }
 
+  # SOUND
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+  # Enable touchpad support (enabled default in most desktopManager).
+  services.libinput.enable = true;
+  services.openssh.enable = true;
+  system.stateVersion = "25.11";
+}
