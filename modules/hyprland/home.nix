@@ -1,7 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
+
+let
+  lua = lib.generators.mkLuaInline;
+in
 {
-# HYPRLAND CONFIG
-wayland.windowManager.hyprland = {
+   wayland.windowManager.hyprland = {
   enable = true;
   systemd.enable = true;
   xwayland.enable = true;
@@ -15,32 +18,22 @@ wayland.windowManager.hyprland = {
       scale = 1;
     };
 
-    exec_once = [ "rot8" ];
-
     config = {
       general = {
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
-
-        col = {
-          active_border = {
-            colors = [
-              "rgba(33cceeee)"
-              "rgba(00ff99ee)"
-            ];
-            angle = 45;
-          };
-          inactive_border = "rgba(595959aa)";
-        };
-
         layout = "dwindle";
         allow_tearing = false;
+        col.active_border = {
+          colors = [ "rgba(33cceeee)" "rgba(00ff99ee)" ];
+          angle = 45;
+        };
+        col.inactive_border = "rgba(595959aa)";
       };
 
       decoration = {
         rounding = 10;
-
         blur = {
           enabled = true;
           size = 8;
@@ -48,7 +41,6 @@ wayland.windowManager.hyprland = {
           new_optimizations = true;
           xray = false;
         };
-
         shadow = {
           enabled = true;
           range = 4;
@@ -57,9 +49,7 @@ wayland.windowManager.hyprland = {
         };
       };
 
-      animations = {
-        enabled = true;
-      };
+      animations.enabled = true;
 
       dwindle = {
         pseudotile = true;
@@ -68,97 +58,68 @@ wayland.windowManager.hyprland = {
     };
 
     curve = {
-      name = "myBezier";
-      curve = {
-        type = "bezier";
-        points = [
-          [ 0.05 0.9 ]
-          [ 0.1 1.05 ]
-        ];
-      };
+      _args = [
+        "myBezier"
+        {
+          type = "bezier";
+          points = [
+            [ 0.05 0.9 ]
+            [ 0.1 1.05 ]
+          ];
+        }
+      ];
     };
 
     animation = [
-      {
-        leaf = "windows";
-        enabled = true;
-        speed = 5.0;
-        curve = "myBezier";
-      }
-      {
-        leaf = "windowsOut";
-        enabled = true;
-        speed = 5.0;
-        curve = "default";
-        style = "popin 80%";
-      }
-      {
-        leaf = "border";
-        enabled = true;
-        speed = 10.0;
-        curve = "default";
-      }
-      {
-        leaf = "borderangle";
-        enabled = true;
-        speed = 8.0;
-        curve = "default";
-      }
-      {
-        leaf = "fade";
-        enabled = true;
-        speed = 5.0;
-        curve = "default";
-      }
-      {
-        leaf = "workspaces";
-        enabled = true;
-        speed = 5.0;
-        curve = "default";
-        style = "slide";
-      }
+      { _args = [ "windows" { enabled = true; speed = 5.0; bezier = "myBezier"; } ]; }
+      { _args = [ "windowsOut" { enabled = true; speed = 5.0; bezier = "default"; style = "popin 80%"; } ]; }
+      { _args = [ "border" { enabled = true; speed = 10.0; bezier = "default"; } ]; }
+      { _args = [ "borderangle" { enabled = true; speed = 8.0; bezier = "default"; } ]; }
+      { _args = [ "fade" { enabled = true; speed = 5.0; bezier = "default"; } ]; }
+      { _args = [ "workspaces" { enabled = true; speed = 5.0; bezier = "default"; style = "slide"; } ]; }
     ];
 
     bind = [
-      [ "SUPER + RETURN" "exec" "kitty" ]
-      [ "SUPER + R" "exec" "sh -c 'pkill rofi || rofi -show drun'" ]
-      [ "SUPER + M" "exit" ]
+      { _args = [ "SUPER + RETURN" (lua ''hl.dsp.exec_cmd("kitty")'') ]; }
+      { _args = [ "SUPER + R" (lua ''hl.dsp.exec_cmd("pkill rofi || rofi -show drun")'') ]; }
+      { _args = [ "SUPER + M" (lua "hl.dsp.exit()") ]; }
 
-      [ "SUPER + Q" "killactive" ]
-      [ "SUPER + F" "fullscreen" 0 ]
-      [ "SUPER + P" "fullscreen" 1 ]
-      [ "SUPER + SPACE" "togglefloating" ]
+      { _args = [ "SUPER + Q" (lua "hl.dsp.window.close()") ]; }
+      { _args = [ "SUPER + F" (lua ''hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" })'') ]; }
+      { _args = [ "SUPER + P" (lua ''hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" })'') ]; }
+      { _args = [ "SUPER + SPACE" (lua ''hl.dsp.window.float({ action = "toggle" })'') ]; }
 
-      [ "SUPER + h" "movefocus" "l" ]
-      [ "SUPER + l" "movefocus" "r" ]
-      [ "SUPER + k" "movefocus" "u" ]
-      [ "SUPER + j" "movefocus" "d" ]
-
-      [ "SUPER + 1" "workspace" 1 ]
-      [ "SUPER + 2" "workspace" 2 ]
-      [ "SUPER + 3" "workspace" 3 ]
-      [ "SUPER + 4" "workspace" 4 ]
-      [ "SUPER + 5" "workspace" 5 ]
-      [ "SUPER + 6" "workspace" 6 ]
-      [ "SUPER + 7" "workspace" 7 ]
-      [ "SUPER + 8" "workspace" 8 ]
-
-      [ "SUPER + SHIFT + 1" "movetoworkspace" 1 ]
-      [ "SUPER + SHIFT + 2" "movetoworkspace" 2 ]
-      [ "SUPER + SHIFT + 3" "movetoworkspace" 3 ]
-      [ "SUPER + SHIFT + 4" "movetoworkspace" 4 ]
-      [ "SUPER + SHIFT + 5" "movetoworkspace" 5 ]
-      [ "SUPER + SHIFT + 6" "movetoworkspace" 6 ]
-      [ "SUPER + SHIFT + 7" "movetoworkspace" 7 ]
-      [ "SUPER + SHIFT + 8" "movetoworkspace" 8 ]
-    ];
+      { _args = [ "SUPER + h" (lua ''hl.dsp.focus({ direction = "l" })'') ]; }
+      { _args = [ "SUPER + l" (lua ''hl.dsp.focus({ direction = "r" })'') ]; }
+      { _args = [ "SUPER + k" (lua ''hl.dsp.focus({ direction = "u" })'') ]; }
+      { _args = [ "SUPER + j" (lua ''hl.dsp.focus({ direction = "d" })'') ]; }
+    ] ++ builtins.concatLists (builtins.genList
+      (i:
+        let ws = i + 1;
+        in [
+          { _args = [ "SUPER + ${toString ws}" (lua "hl.dsp.focus({ workspace = ${toString ws} })") ]; }
+          { _args = [ "SUPER + SHIFT + ${toString ws}" (lua "hl.dsp.window.move({ workspace = ${toString ws} })") ]; }
+        ])
+      8);
 
     bindm = [
-      [ "SUPER + mouse:272" "window.drag" ]
-      [ "SUPER + mouse:273" "window.resize" ]
+      { _args = [ "SUPER + mouse:272" (lua ''hl.dsp.window.drag()'') ]; }
+      { _args = [ "SUPER + mouse:273" (lua ''hl.dsp.window.resize()'') ]; }
     ];
+
+    on = {
+      _args = [
+        "hyprland.start"
+        (lua ''
+          function()
+            hl.exec_cmd("rot8")
+          end
+        '')
+      ];
+    };
   };
 };
+
 		  
 		  
 
