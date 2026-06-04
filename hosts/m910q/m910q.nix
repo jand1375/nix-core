@@ -12,6 +12,7 @@
     ../../common/common.nix
     ../../modules/hyprland
     ../../modules/podman
+    ../../modules/fish
   ];
   home-manager.users.nyx = {
     home.stateVersion = "26.05";
