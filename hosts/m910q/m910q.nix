@@ -38,10 +38,10 @@
 
   users.mutableUsers = true;
 
-  # environment.systemPackages = with pkgs; [
-  #   vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #   wget
-  # ];
+  environment.systemPackages = with pkgs; [
+    brave
+
+  ];
 
   services.openssh = {
     enable = true;
