@@ -39,6 +39,7 @@
     cage
     pulsemixer
     brave
+    qmapshack
   ];
 
   # BOOT AND KERNEL
