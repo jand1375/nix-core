@@ -16,6 +16,7 @@
     ../../services/qemu
     ../../instances/xclarity
     ../../modules/fish
+    ../../modules/flatpak
   ];
   home-manager.users.nyx = {
     home.stateVersion = "26.05";
