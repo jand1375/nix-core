@@ -13,6 +13,7 @@
     ../../modules/hyprland
     ../../modules/podman
     ../../modules/fish
+    ../../modules/flatpak
   ];
   home-manager.users.nyx = {
     home.stateVersion = "26.05";
@@ -20,6 +21,7 @@
       ../../modules/neovim/home.nix
       ../../modules/hyprland/home.nix
       ../../modules/kitty/home.nix
+      ../../modules/bash/home.nix
     ];
   };
 
