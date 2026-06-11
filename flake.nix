@@ -7,6 +7,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixvirt.url = "github:AshleyYakeley/NixVirt";
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +28,7 @@
       home-manager,
       disko,
       nixvirt,
+      nix-flatpak,
       ...
     }@inputs:
     {
@@ -35,6 +37,7 @@
           system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
+            nix-flatpak.nixosModules.nix-flatpak
             ./hosts/gbook/galaxy.nix
             home-manager.nixosModules.home-manager
             nixvirt.nixosModules.default
@@ -69,6 +72,7 @@
           system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
+            nix-flatpak.nixosModules.nix-flatpak
             ./hosts/m910q/m910q.nix
             home-manager.nixosModules.home-manager
           ];
