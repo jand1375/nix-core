@@ -93,8 +93,7 @@
                      10.40.0.0/24,
                      10.50.0.0/24,
                      10.60.0.0/24,
-                                               }
-            accept                  
+           } accept                  
                       }
        chain output {
              type filter hook output priority 0;
