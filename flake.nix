@@ -60,11 +60,11 @@
             home-manager.nixosModules.home-manager
           ];
         };
-        sr250 = nixpkgs.lib.nixosSystem {
+        sophos = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
-            ./hosts/sr250/sr250serv.nix
+            ./hosts/sophos/sophos.nix
             home-manager.nixosModules.home-manager
           ];
         };
