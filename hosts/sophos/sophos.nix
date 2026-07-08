@@ -10,6 +10,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../common/common.nix
+    ../../services/prometheus
   ];
 
   home-manager.users.nyx = {
@@ -69,37 +70,42 @@
   ];
   # Out-of-Band Management
   networking.interfaces.enp4s0.useDHCP = true;
+
   networking.nftables.ruleset = ''
-       table inet filter {
-         chain input {
-            type filter hook input priority 0;
-            policy drop;
-            iifname "lo" accept
-            ct state established,related accept
-    # Allow ping
-                ip protocol icmp accept
-    # Allow SSH
-                tcp dport 22 accept
-                      }
-         chain forward {
-            type filter hook forward priority 0;
-            policy drop;
-            ct state established,related accept
-    # Allow internal vlans toward ISR
-            iifname "enp2s0" oifname "enp3s0" ip saddr {
-                     10.10.0.0/24,
-                     10.20.0.0/24,
-                     10.30.0.0/24,
-                     10.40.0.0/24,
-                     10.50.0.0/24,
-                     10.60.0.0/24,
-           } accept                  
-                      }
-       chain output {
-             type filter hook output priority 0;
-             policy accept;
-                    }
-                      }
+             table inet filter {
+               chain input {
+                  type filter hook input priority 0;
+                  policy drop;
+                  iifname "lo" accept
+                  ct state established,related accept
+          # Allow ping
+                      ip protocol icmp accept
+         
+        # Allow TCP SERRVICES FROM INTERNAL VLANS
+                    ip saddr { 10.10.0.0/24, 10.20.0.0/24, 10.30.0.0/24, 10.40.0.0/24,
+                               10.50.0.0/24, 10.60.0.0/24 }
+                    tcp dport { 22, 3000, 8000, 9090, 9443 } accept
+                            
+        # ALLOW TFTP (UDP 69) FROM INTERNAL VLANS
+                    ip saddr { 10.10.0.0/24, 10.20.0.0/24, 10.30.0.0/24, 10.40.0.0/24,
+                               10.50.0.0/24, 10.60.0.0/24 } 
+    i                 udp dport 69 accept }
+
+
+              chain forward {
+                  type filter hook forward priority 0;
+                  policy drop;
+                  ct state established,related accept
+          # Allow internal vlans toward ISR
+                  iifname "enp2s0" oifname "enp3s0" ip saddr { 10.10.0.0/24, 10.20.0.0/24,
+                                      10.30.0.0/24, 10.40.0.0/24, 10.50.0.0/24, 10.0.0.60/24,
+                  } accept                  
+                            }
+             chain output {
+                   type filter hook output priority 0;
+                   policy accept;
+                          }
+                            }
   '';
   # Static Routes
   networking.interfaces.enp2s0.ipv4.routes = [
