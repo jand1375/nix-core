@@ -1,58 +1,91 @@
-{ config, pkgs, ...}:
+{ config, pkgs, ... }:
+let
+  nodeExporterFull = pkgs.fetchurl {
+    url = "https://grafana.com/api/dashboards/1860/revisions/latest/download";
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  };
+in
 {
-   services.prometheus = 
-     {
+  services.prometheus = {
+    enable = true;
+    port = 9090;
+    globalConfig = {
+      scrape_interval = "15s";
+      evaluation_interval = "15s";
+    };
+
+    scrapeConfigs = [
+      {
+        job_name = "prometheus";
+        static_configs = [ { targets = [ "127.0.0.1:9090" ]; } ];
+      }
+
+      {
+        job_name = "node-exporter";
+        static_configs = [
+          {
+            targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
+          }
+        ];
+      }
+    ];
+    # Enable Node Eplorer
+    exporters = {
+      node = {
         enable = true;
-        port = 9090;
-        globalConfig = { 
-                          scrape_interval = "15s";
-                        evaluation_interval = "15s";
-                       };
+        enabledCollectors = [
+          "systemd"
+          "cpu"
+          "meminfo"
+          "diskstats"
+          "netdev"
+        ];
+        port = 9100;
+      };
+    };
+  };
 
-        scrapeConfigs = [
-               {
-                 job_name = "prometheus";
-                 static_configs = [{ targets = [ "127.0.0.1:9090" ]; }];
-                }
-
-               { 
-                 job_name = "node-exporter";
-                 static_configs = [{ targets = 
-                                     [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ]; }];
-                } 
-                            ];
-                                     # Enable Node Eplorer
-       exporters = {
-               node = {
-                      enable = true;
-                      enabledCollectors = [ "systemd" "cpu" "meminfo" "diskstats" "netdev" ];
-                      port = 9100;
-                      };
-                    };
-         };
-
-   services.grafana = {
-          enable = true;
-          settings = {
-                server = {
-                           http_addr = "0.0.0.0";
-                           http_port = 3000;
-                         };
-                security = { secret_key = "nixos-grafana-test"; };
-              dashboards = { min_refresh_interval = "5s"; };
-                    };
-                                    # Add Prometheus as a Data Source
-           provision = {
-                       enable = true;
-                       datasources.settings.datasources = [
-                                         {
-                                            name = "Prometheus";
-                                            type = "prometheus";
-                                            url = "http://localhost:9090";
-                                            isDefault = true;
-                                          }
-                                                         ];
-                          };
-                     };
-
+  services.grafana = {
+    enable = true;
+    settings = {
+      server = {
+        http_addr = "0.0.0.0";
+        http_port = 3000;
+      };
+      security = {
+        secret_key = "nixos-grafana-test";
+      };
+      dashboards = {
+        min_refresh_interval = "5s";
+      };
+    };
+    # Add Prometheus as a Data Source
+    provision = {
+      enable = true;
+      datasources.settings.datasources = [
+        {
+          name = "Prometheus";
+          type = "prometheus";
+          url = "http://localhost:9090";
+          isDefault = true;
+        }
+      ];
+      dashboards.settings = {
+        apiVersion = 1;
+        providers = [
+          {
+            name = "Node Exporter";
+            orgId = 1;
+            folder = "Infrastructure";
+            type = "file";
+            disableDeletion = true;
+            editable = false;
+            options = {
+              path = "/etc/grafana-dashboards";
+            };
+          }
+        ];
+      };
+    };
+  };
 }
