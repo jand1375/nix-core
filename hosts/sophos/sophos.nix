@@ -89,16 +89,16 @@
     # ALLOW TFTP (UDP 69) FROM INTERNAL VLANS
                 ip saddr { 10.10.0.0/24, 10.20.0.0/24, 10.30.0.0/24, 10.40.0.0/24,
                            10.50.0.0/24, 10.60.0.0/24 } 
-                  udp dport 69 accept }
+                  udp dport 69 accept 
+               }
 
-
-          chain forward {
+              chain forward {
               type filter hook forward priority 0;
               policy drop;
               ct state established,related accept
       # Allow internal vlans toward ISR
               iifname "enp2s0" oifname "enp3s0" ip saddr { 10.10.0.0/24, 10.20.0.0/24,
-                                  10.30.0.0/24, 10.40.0.0/24, 10.50.0.0/24, 10.0.0.60/24, } accept
+                                  10.30.0.0/24, 10.40.0.0/24, 10.50.0.0/24, 10.60.0.0/24, } accept
                          }
          chain output {
                type filter hook output priority 0;
