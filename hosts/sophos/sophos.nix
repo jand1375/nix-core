@@ -55,14 +55,14 @@
   # Enable IPV4 Routing
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
   # Transit Network to Cisco vlan90
-  networking.interfaces.enp2s0.ipv4.addresses = [
+  networking.interfaces.enp5s0.ipv4.addresses = [
     {
       address = "10.90.0.2";
       prefixLength = 24;
     }
   ];
   # Outside Network to Cisco ISR4331
-  networking.interfaces.enp3s0.ipv4.addresses = [
+  networking.interfaces.enp6s0.ipv4.addresses = [
     {
       address = "10.99.0.2";
       prefixLength = 24;
@@ -97,7 +97,7 @@
               policy drop;
               ct state established,related accept
       # Allow internal vlans toward ISR
-              iifname "enp2s0" oifname "enp3s0" ip saddr { 10.10.0.0/24, 10.20.0.0/24,
+              iifname "enp5s0" oifname "enp6s0" ip saddr { 10.10.0.0/24, 10.20.0.0/24,
                                   10.30.0.0/24, 10.40.0.0/24, 10.50.0.0/24, 10.60.0.0/24, } accept
                          }
          chain output {
@@ -107,7 +107,7 @@
                         }
   '';
   # Static Routes
-  networking.interfaces.enp2s0.ipv4.routes = [
+  networking.interfaces.enp5s0.ipv4.routes = [
     {
       address = "10.10.0.0";
       prefixLength = 24;
