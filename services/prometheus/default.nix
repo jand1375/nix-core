@@ -1,11 +1,18 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   nodeExporterFull = pkgs.fetchurl {
     url = "https://grafana.com/api/dashboards/1860/revisions/latest/download";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
   };
 in
 {
+  environment.etc."grafana-dashboards/node-exporter-full.json".source = nodeExporterFull;
+
   services.prometheus = {
     enable = true;
     port = 9090;
