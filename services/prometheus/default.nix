@@ -35,6 +35,30 @@ in
           }
         ];
       }
+
+      {
+        job_name = "cisco-3850";
+        metrics_path = "/snmp";
+        params = {
+          module = [ "if_mib" ];
+          auth = [ "cisco_v3" ];
+        };
+        static_configs = [ { targets = [ "10.90.0.1" ]; } ];
+        relabel_configs = [
+          {
+            source_labels = [ "__address__" ];
+            target_label = "__param_target";
+          }
+          {
+            source_labels = [ "__param_target" ];
+            target_label = "instance";
+          }
+          {
+            target_label = "__address__";
+            replcement = "127.0.0.1:${toString config.services.prometheus.exporters.snmp.port}";
+          }
+        ];
+      }
     ];
     # Enable Node Eplorer
     exporters = {
