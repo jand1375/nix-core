@@ -9,9 +9,15 @@ let
     url = "https://grafana.com/api/dashboards/1860/revisions/latest/download";
     hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
   };
+  ciscoDashboard = pkgs.fetchurl {
+    url = "CISCO_DASHBOARD_URL";
+    hash = pkgs.lib.fakeHash;
+  };
+
 in
 {
   environment.etc."grafana-dashboards/node-exporter-full.json".source = nodeExporterFull;
+  environment.etc."grafana-dashboards/cisco-33850.json".source = ciscoDashboards;
 
   services.prometheus = {
     enable = true;
@@ -72,6 +78,28 @@ in
           "netdev"
         ];
         port = 9100;
+      };
+      snmp = {
+        enable = true;
+        port = 9116;
+        environmentFile = "/root/snmp-exporter.env";
+        configuration = {
+          auths_cisco_v3 = {
+            version = 3;
+            security_level = "authPriv";
+            username = "nyx";
+            auth_protocol = "SHA";
+            password = "$SNMP_AUTH_PASSWORD";
+            priv_protocol = "AES";
+            priv_password = "$SNMP_PRIV_PASSWORD";
+          };
+          modules.if_mib = {
+            walk = [
+              "1.3.6.1.2.1.2"
+              "1.3.6.1.2.1.31.1.1"
+            ];
+          };
+        };
       };
     };
   };
