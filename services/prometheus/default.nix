@@ -9,15 +9,15 @@ let
     url = "https://grafana.com/api/dashboards/1860/revisions/latest/download";
     hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
   };
-  ciscoDashboard = pkgs.fetchurl {
-    url = "CISCO_DASHBOARD_URL";
-    hash = pkgs.lib.fakeHash;
-  };
+  #  ciscoDashboard = pkgs.fetchurl {
+  #   url = "CISCO_DASHBOARD_URL";
+  #  hash = pkgs.lib.fakeHash;
+  #};
 
 in
 {
   environment.etc."grafana-dashboards/node-exporter-full.json".source = nodeExporterFull;
-  environment.etc."grafana-dashboards/cisco-33850.json".source = ciscoDashboards;
+  # environment.etc."grafana-dashboards/cisco-3850.json".source = ciscoDashboard;
 
   services.prometheus = {
     enable = true;
@@ -61,7 +61,7 @@ in
           }
           {
             target_label = "__address__";
-            replcement = "127.0.0.1:${toString config.services.prometheus.exporters.snmp.port}";
+            replacement = "127.0.0.1:${toString config.services.prometheus.exporters.snmp.port}";
           }
         ];
       }
@@ -84,14 +84,16 @@ in
         port = 9116;
         environmentFile = "/root/snmp-exporter.env";
         configuration = {
-          auths_cisco_v3 = {
-            version = 3;
-            security_level = "authPriv";
-            username = "nyx";
-            auth_protocol = "SHA";
-            password = "$SNMP_AUTH_PASSWORD";
-            priv_protocol = "AES";
-            priv_password = "$SNMP_PRIV_PASSWORD";
+          auths = {
+            cisco_v3 = {
+              version = 3;
+              security_level = "authPriv";
+              username = "nyx";
+              auth_protocol = "SHA";
+              password = "\$SNMP_AUTH_PASSWORD";
+              priv_protocol = "AES";
+              priv_password = "\$SNMP_PRIV_PASSWORD";
+            };
           };
           modules.if_mib = {
             walk = [
