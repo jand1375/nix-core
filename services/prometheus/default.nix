@@ -9,15 +9,18 @@ let
     url = "https://grafana.com/api/dashboards/1860/revisions/latest/download";
     hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
   };
-  #  ciscoDashboard = pkgs.fetchurl {
-  #   url = "CISCO_DASHBOARD_URL";
-  #  hash = pkgs.lib.fakeHash;
-  #};
-
+  ciscoDashboard = pkgs.fetchurl {
+    url = "https://grafana.com/api/dashboards/21962/revisions/1/download";
+    hash = "sha256-NmzLIYoqoz24zLQB+k6yBj5Iux5+werIAkCxgbv3t20=";
+  };
+  officialSnmpConfig = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/prometheus/snmp_exporter/v0.30.1/snmp.yml";
+    hash = pkgs.lib.fakeHash;
+  };
 in
 {
   environment.etc."grafana-dashboards/node-exporter-full.json".source = nodeExporterFull;
-  # environment.etc."grafana-dashboards/cisco-3850.json".source = ciscoDashboard;
+  environment.etc."grafana-dashboards/cisco-3850.json".source = ciscoDashboard;
 
   services.prometheus = {
     enable = true;
@@ -95,12 +98,8 @@ in
               priv_password = "\$SNMP_PRIV_PASSWORD";
             };
           };
-          modules.if_mib = {
-            walk = [
-              "1.3.6.1.2.1.2"
-              "1.3.6.1.2.1.31.1.1"
-            ];
-          };
+       };
+        extraFlags = [ "--config.file=${officialSnmpConfig}"
         };
       };
     };
