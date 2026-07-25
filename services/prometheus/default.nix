@@ -9,10 +9,15 @@ let
     url = "https://grafana.com/api/dashboards/1860/revisions/latest/download";
     hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
   };
-  ciscoDashboard = pkgs.fetchurl {
+  ciscoDashboardUpstream = pkgs.fetchurl {
     url = "https://grafana.com/api/dashboards/21962/revisions/1/download";
     hash = "sha256-NmzLIYoqoz24zLQB+k6yBj5Iux5+werIAkCxgbv3t20=";
   };
+  ciscoDashboard = pkgs.runCommand "cisco-3850-dashboard.json" { } ''
+    sed 's/''${DS_PROMETHEUS}/Prometheus/g' \
+    ${ciscoDashboardUpstream} > "$out"
+  '';
+
   officialSnmpConfig = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/prometheus/snmp_exporter/v0.30.1/snmp.yml";
     hash = "sha256-TgPrC4f0TBSJwrvGUVUJMcGunfj0VT4IZAyhoiucItQ=";
@@ -126,6 +131,7 @@ in
         {
           name = "Prometheus";
           type = "prometheus";
+          uuid = "prometheus";
           url = "http://localhost:9090";
           isDefault = true;
         }
@@ -138,7 +144,7 @@ in
             orgId = 1;
             folder = "Infrastructure";
             type = "file";
-            disableDeletion = true;
+            disableDeletion = false;
             editable = false;
             options = {
               path = "/etc/grafana-dashboards";
