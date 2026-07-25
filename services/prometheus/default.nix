@@ -15,7 +15,7 @@ let
   };
   officialSnmpConfig = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/prometheus/snmp_exporter/v0.30.1/snmp.yml";
-    hash = pkgs.lib.fakeHash;
+    hash = "sha256-TgPrC4f0TBSJwrvGUVUJMcGunfj0VT4IZAyhoiucItQ=";
   };
 in
 {
@@ -86,6 +86,7 @@ in
         enable = true;
         port = 9116;
         environmentFile = "/root/snmp-exporter.env";
+        enableConfigCheck = false;
         configuration = {
           auths = {
             cisco_v3 = {
@@ -98,9 +99,8 @@ in
               priv_password = "\$SNMP_PRIV_PASSWORD";
             };
           };
-       };
-        extraFlags = [ "--config.file=${officialSnmpConfig}"
         };
+        extraFlags = [ "--config.file=${officialSnmpConfig}" ];
       };
     };
   };
