@@ -11,6 +11,7 @@
     ./hardware-configuration.nix
     ../../common/common.nix
     ../../services/prometheus
+    ../../services/tftp
   ];
 
   home-manager.users.nyx = {
