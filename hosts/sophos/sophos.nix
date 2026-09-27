@@ -11,7 +11,7 @@
     ./hardware-configuration.nix
     ../../common/common.nix
     ../../services/prometheus
-    ../../services/tftp
+    #    ../../services/tftp
   ];
 
   home-manager.users.nyx = {
@@ -38,6 +38,12 @@
     enable = true;
     settings.PermitRootLogin = "yes";
     settings.PasswordAuthentication = true;
+  };
+
+  networking.hosts = {
+    "10.0.0.10" = [ "controller" ];
+    "10.0.0.11" = [ "compute1" ];
+    "10.0.0.12" = [ "compute2" ];
   };
 
   networking.hostName = "sophos";
@@ -69,8 +75,13 @@
       prefixLength = 24;
     }
   ];
-  # Out-of-Band Management
-  networking.interfaces.enp4s0.useDHCP = true;
+  # Openstack Control/API monitoring Arista 7010T VLAN 80
+  networking.interfaces.enp3s0f1.ipv4.addresses = [
+    {
+      address = "10.0.0.13";
+      prefixLength = 24;
+    }
+  ];
 
   networking.nftables.ruleset = ''
          table inet filter {

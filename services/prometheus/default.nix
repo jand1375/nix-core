@@ -4,11 +4,21 @@
   lib,
   ...
 }:
+
 let
   nodeExporterFull = pkgs.fetchurl {
     url = "https://grafana.com/api/dashboards/1860/revisions/latest/download";
     hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
   };
+  openstackOverviewUpstream = pkgs.fetchurl {
+    url = "https://grafana.com/api/dashboards/21085/revisions/3/download";
+    hash = "sha256-sehY4i04Vz6nWn7w6udqeaGog6RUqZ6wTDwpgNmaH2Y=";
+  };
+  openstackOverview = pkgs.runCommand "openstack-overview.json" { } ''
+    sed 's/''${DS_PROMETHEUS}/Prometheus/g' \
+    ${openstackOverviewUpstream} > "$out"
+  '';
+
   ciscoDashboardUpstream = pkgs.fetchurl {
     url = "https://grafana.com/api/dashboards/21962/revisions/1/download";
     hash = "sha256-NmzLIYoqoz24zLQB+k6yBj5Iux5+werIAkCxgbv3t20=";
@@ -22,10 +32,44 @@ let
     url = "https://raw.githubusercontent.com/prometheus/snmp_exporter/v0.30.1/snmp.yml";
     hash = "sha256-TgPrC4f0TBSJwrvGUVUJMcGunfj0VT4IZAyhoiucItQ=";
   };
+  openstackExporter = pkgs.buildGoModule {
+    pname = "openstack-exporter";
+    version = "1.7.0";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "openstack-exporter";
+      repo = "openstack-exporter";
+      rev = "v1.7.0";
+      hash = "sha256-FWkSJqKdwjK6wKOGYRWUyZ0KaqIq78sgthnzLqOwpHk=";
+    };
+    vendorHash = "sha256-ssjNgBd64Edjpm/c8x6vcR+kYE2FY4o+aWn74WuehZU=";
+  };
 in
 {
-  environment.etc."grafana-dashboards/node-exporter-full.json".source = nodeExporterFull;
-  environment.etc."grafana-dashboards/cisco-3850.json".source = ciscoDashboard;
+  # SYSTEMD FOR OPENSTACK EXPORTER
+  systemd.services.openstack-exporter = {
+    description = "OpenStack Prometheus Exporter";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${openstackExporter}/bin/openstack-exporter --web.listen-address=127.0.0.1:9180 openstack ";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+    environment = {
+      OS_CLIENT_CONFIG_FILE = "/root/.config/openstack/clouds.yaml";
+    };
+  };
+
+  environment.systemPackages = [ openstackExporter ];
+
+  environment.etc."grafana-dashboards/infrastructure/node-exporter-full.json".source =
+    nodeExporterFull;
+  environment.etc."grafana-dashboards/infrastructure/cisco-3850.json".source = ciscoDashboard;
+  environment.etc."grafana-dashboards/openstack/openstack-overview.json".source = openstackOverview;
 
   services.prometheus = {
     enable = true;
@@ -45,7 +89,12 @@ in
         job_name = "node-exporter";
         static_configs = [
           {
-            targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
+            targets = [
+              "127.0.0.1:${toString config.services.prometheus.exporters.node.port}"
+              "10.0.0.10:9100"
+              "10.0.0.11:9100"
+              "10.0.0.12:9100"
+            ];
           }
         ];
       }
@@ -70,6 +119,16 @@ in
           {
             target_label = "__address__";
             replacement = "127.0.0.1:${toString config.services.prometheus.exporters.snmp.port}";
+          }
+        ];
+      }
+      {
+        job_name = "openstack";
+        scrape_interval = "60s";
+        scrape_timeout = "55s";
+        static_configs = [
+          {
+            targets = [ "127.0.0.1:9180" ];
           }
         ];
       }
@@ -140,14 +199,25 @@ in
         apiVersion = 1;
         providers = [
           {
-            name = "Node Exporter";
+            name = "Infrastructure";
             orgId = 1;
             folder = "Infrastructure";
             type = "file";
             disableDeletion = false;
             editable = false;
             options = {
-              path = "/etc/grafana-dashboards";
+              path = "/etc/grafana-dashboards/infrastructure";
+            };
+          }
+          {
+            name = "OpenStack";
+            orgid = 1;
+            folder = "OpenStack";
+            type = "file";
+            disableDeletion = false;
+            editable = false;
+            options = {
+              path = "/etc/grafana-dashboards/openstack";
             };
           }
         ];
