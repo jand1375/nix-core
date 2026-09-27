@@ -38,7 +38,7 @@
     wireplumber
     rot8
     prismlauncher
-    qutebrowser
+    #    qutebrowser
     cage
     pulsemixer
     brave
