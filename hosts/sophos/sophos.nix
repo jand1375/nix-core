@@ -65,7 +65,7 @@
   # Managemnt for Arista7010T
   networking.interfaces.enp7s0.ipv4.addresses = [
     {
-      address = "192.168.10.03";
+      address = "192.168.10.3";
       prefixLength = 24;
     }
   ];
