@@ -61,6 +61,15 @@
   networking.defaultGateway = "10.99.0.254";
   # Enable IPV4 Routing
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+
+  # Managemnt for Arista7010T
+  networking.interfaces.enp7s0.ipv4.addresses = [
+    {
+      address = "192.168.10.03";
+      prefixLength = 24;
+    }
+  ];
+
   # Transit Network to Cisco vlan90
   networking.interfaces.enp5s0.ipv4.addresses = [
     {
