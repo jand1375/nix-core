@@ -41,7 +41,7 @@
     #    qutebrowser
     cage
     pulsemixer
-    brave
+    firefox
     qmapshack
   ];
 
