@@ -31,6 +31,11 @@
       nix-flatpak,
       ...
     }@inputs:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+
     {
       nixosConfigurations = {
         gbook = nixpkgs.lib.nixosSystem {
@@ -77,14 +82,18 @@
             home-manager.nixosModules.home-manager
           ];
         };
-         coolbite = nixpkgs.lib.nixosSystem {
-		 system = "x86_64-linux";
-		 specialArgs = { inherit inputs; };
-		 modules = [
-		    ./hosts/coolbite/bite.nix
-			home-manager.nixosModules.home-manager
-			];
-		 };
+        coolbite = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./hosts/coolbite/bite.nix
+            home-manager.nixosModules.home-manager
+          ];
+        };
+      };
+      devShells.${system} = {
+        default = import ./dev-shells/python.nix { inherit pkgs; };
+        python = import ./dev-shells/python.nix { inherit pkgs; };
       };
     };
 }
