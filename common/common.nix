@@ -26,11 +26,15 @@
     cpio
     htop
     util-linux
-    nmap
     ticker
     openssl
-    glab
+    # CyberSecurity
+    metasploit
+    nmap
+    burpsuite
+    wireshark
   ];
+  nixpkgs.config.allowUnfree = true;
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono

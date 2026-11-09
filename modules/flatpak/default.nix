@@ -9,6 +9,7 @@
   ];
   services.flatpak.packages = [
     "com.spotify.Client"
+    "com.vivaldi.Vivaldi"
   ];
   # DELETES ANY IMPERATIVE FLATPAKS ON REBUILD
   services.flatpak.uninstallUnmanaged = true;
