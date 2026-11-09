@@ -45,6 +45,12 @@
     qmapshack
   ];
 
+  console = {
+    enable = true;
+    font = "ter-i32b";
+    packages = with pkgs; [ terminus_font ];
+  };
+
   # BOOT AND KERNEL
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

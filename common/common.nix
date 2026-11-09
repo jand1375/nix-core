@@ -17,6 +17,7 @@
   environment.systemPackages = with pkgs; [
     git
     gh
+    opentofu
     fastfetch
     glances
     curl
