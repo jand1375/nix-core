@@ -4,6 +4,7 @@
     enable = true;
     settings = {
       shell = "fish";
+      remember_window_size = "no";
       font_family = "FiraCode Nerd Font";
       font_size = "16";
       background_opacity = "0.95";
