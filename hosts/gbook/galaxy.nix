@@ -53,6 +53,7 @@
   };
 
   # BOOT AND KERNEL
+  boot.initrd.kernelModules = [ "i915" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
