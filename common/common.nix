@@ -28,6 +28,7 @@
     util-linux
     ticker
     openssl
+    awscli2
     # CyberSecurity
     metasploit
     nmap
