@@ -34,6 +34,7 @@
     nmap
     burpsuite
     wireshark
+    wifite2
   ];
   nixpkgs.config.allowUnfree = true;
 

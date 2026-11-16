@@ -64,6 +64,7 @@
   boot.blacklistedKernelModules = [ "ucsi_acpi" ];
 
   # HARDWARE
+  hardware.enableRedistributableFirmware = true;
   hardware.xpadneo.enable = true;
   hardware.steam-hardware.enable = true;
   hardware.bluetooth.enable = true;
