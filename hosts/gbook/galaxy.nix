@@ -44,6 +44,11 @@
     qmapshack
   ];
 
+  programs.wireshark = {
+    enable = true;
+    package = pkgs.wireshark;
+  };
+
   console = {
     enable = true;
     earlySetup = true;
