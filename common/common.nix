@@ -54,6 +54,7 @@
       "input"
       "video"
       "libvirtd"
+      "wireshark"
       "docker"
     ];
     openssh.authorizedKeys.keys = [
