@@ -34,6 +34,8 @@
     nmap
     burpsuite
     wifite2
+    aircrack-ng
+    (wordlists.override { lists = [ rockyou ]; })
   ];
   nixpkgs.config.allowUnfree = true;
 
