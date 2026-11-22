@@ -42,6 +42,7 @@
     #    qutebrowser
     cage
     pulsemixer
+    ipmitool
     qmapshack
   ];
 
@@ -68,6 +69,10 @@
     "systemd.show_status=true"
   ];
   boot.blacklistedKernelModules = [ "ucsi_acpi" ];
+  boot.kernelModules = [
+    "ipmi_devintf"
+    "ipmi_si"
+  ];
 
   # HARDWARE
   hardware.enableRedistributableFirmware = true;

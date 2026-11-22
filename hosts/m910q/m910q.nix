@@ -42,7 +42,8 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-
+    wireplumber
+    pulsemixer
   ];
 
   services.openssh = {
@@ -55,7 +56,12 @@
     "nix-command"
     "flakes"
   ];
-
+  # SOUND
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
   system.stateVersion = "26.05";
-
 }
