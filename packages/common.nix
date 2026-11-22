@@ -29,13 +29,7 @@
     ticker
     openssl
     awscli2
-    # CyberSecurity
-    metasploit
-    nmap
-    burpsuite
-    wifite2
-    aircrack-ng
-    (wordlists.override { lists = [ rockyou ]; })
+
   ];
   nixpkgs.config.allowUnfree = true;
 

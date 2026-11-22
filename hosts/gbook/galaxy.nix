@@ -9,7 +9,8 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../common/common.nix
+    ../../packages/common.nix
+    ../../packages/cyber.nix
     ../../modules/hyprland
     #    ../../modules/xfce
     ../../modules/podman
